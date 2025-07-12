@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Sales | Velocity Motors</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .top-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .contact-info {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .action-buttons a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .login-btn {
+            background-color: var(--secondary);
+        }
+        .rental-btn, .sales-btn, .prices-btn {
+            background-color: transparent;
+            border: 1px solid white;
+        }
+        nav {
+            background-color: white;
+            padding: 15px 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../assets/img/sales-hero.webp');
+            background-size: cover;
+            background-position: center;
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            color: white;
+            text-align: center;
+        }
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .sales-container {
+            padding: 50px 5%;
+            display: flex;
+            gap: 30px;
+        }
+        .filter-sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .filter-sidebar h3 {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .vehicle-results {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .vehicle-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+        }
+        .vehicle-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .vehicle-card:hover .vehicle-image img {
+            transform: scale(1.05);
+        }
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .vehicle-details {
+            padding: 20px;
+        }
+        .vehicle-details h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        .specs {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #666;
+            flex-wrap: wrap;
+        }
+        .specs span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .specs img {
+            width: 16px;
+            height: 16px;
+        }
+        .pricing {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        .original-price {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+            margin-right: 10px;
+        }
+        .mileage {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .cta-buy {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .cta-buy:hover {
+            background-color: var(--secondary);
+        }
+        .cta-inquire {
+            background-color: white;
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            border: 1px solid var(--primary);
+            margin-right: 10px;
+        }
+        .cta-inquire:hover {
+            background-color: var(--light);
+        }
+        .vehicle-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .finance-badge {
+            background-color: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 5%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        .footer-column ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+        }
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Contact Info and Action Buttons -->
+    <div class="top-bar">
+        <div class="contact-info">
+            <span>Phone: +254 757 888 000</span>
+            <span>info@velocitymotors.com</span>
+            <span>Mon-Sat: 09:00 - 17:00</span>
+        </div>
+        <div class="action-buttons">
+            <a href="../auth/login.html" class="login-btn">Login</a>
+            <a href="rental.html" class="rental-btn">Rental</a>
+            <a href="sales.html" class="sales-btn">Sales</a>
+            <a href="../prices.html" class="prices-btn">Prices</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">VELOCITY MOTORS</div>
+        <div class="nav-links">
+            <a href="../index.html">HOME</a>
+            <a href="../about_us.html">ABOUT US</a>
+            <a href="sales.html">VEHICLES</a>
+            <a href="../contact_us.html">CONTACT</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>PREMIUM VEHICLES FOR SALE</h1>
+            <p>Own your dream car from our exclusive collection of luxury, performance, and family vehicles</p>
+        </div>
+    </section>
+
+    <!-- Main Sales Content -->
+    <div class="sales-container">
+        <!-- Filter Sidebar -->
+        <div class="filter-sidebar">
+            <h3>Filter Vehicles</h3>
+            <div class="filter-group">
+                <label>Car Type:</label>
+                <select id="typeFilter">
+                    <option value="all">All Vehicles</option>
+                    <option value="luxury">Luxury Sedans</option>
+                    <option value="suv">SUVs</option>
+                    <option value="sports">Sports Cars</option>
+                    <option value="executive">Executive</option>
+                    <option value="family">Family</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Price Range (KES):</label>
+                <select id="priceFilter">
+                    <option value="all">All Prices</option>
+                    <option value="0-5">Under 5 Million</option>
+                    <option value="5-10">5-10 Million</option>
+                    <option value="10-15">10-15 Million</option>
+                    <option value="15+">15 Million+</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Year:</label>
+                <select id="yearFilter">
+                    <option value="all">All Years</option>
+                    <option value="2020">2020+</option>
+                    <option value="2018">2018-2020</option>
+                    <option value="2015">2015-2018</option>
+                    <option value="2010">2010-2015</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Mileage (km):</label>
+                <select id="mileageFilter">
+                    <option value="all">Any Mileage</option>
+                    <option value="0-20000">Under 20,000</option>
+                    <option value="20000-50000">20,000-50,000</option>
+                    <option value="50000-100000">50,000-100,000</option>
+                    <option value="100000+">100,000+</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Transmission:</label>
+                <select id="transmissionFilter">
+                    <option value="all">All</option>
+                    <option value="automatic">Automatic</option>
+                    <option value="manual">Manual</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Vehicle Results -->
+        <div class="vehicle-results">
+            <!-- Mercedes S-Class -->
+            <div class="vehicle-card" data-type="luxury executive" data-price="12.5" data-year="2021" data-mileage="18000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/mercedes-sclass.webp" alt="Mercedes S-Class">
+                    <span class="badge">Certified Pre-Owned</span>
+                </div>
+                <div class="vehicle-details">
+                    <h3>2021 Mercedes-Benz S560</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2021</span>
+                        <span> 18,000 km</span>
+                        <span> 4.0L V8</span>
+                    </div>
+                    <div class="pricing">
+                        <span class="original-price">KES 15,000,000</span>
+                        <span class="price">KES 12,500,000</span>
+                    </div>
+                    <div class="mileage">Low mileage • Full service history</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2021 Mercedes-Benz S560">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Range Rover Sport -->
+            <div class="vehicle-card" data-type="suv luxury" data-price="18.2" data-year="2022" data-mileage="12000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/range-rover-sport.webp" alt="Range Rover Sport">
+                    <span class="badge">New Arrival</span>
+                </div>
+                <div class="vehicle-details">
+                    <h3>2022 Range Rover Sport HSE</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2022</span>
+                        <span> 12,000 km</span>
+                        <span> 3.0L Supercharged</span>
+                    </div>
+                    <div class="price">KES 18,200,000 <span class="finance-badge">Financing Available</span></div>
+                    <div class="mileage">Like new condition • Warranty included</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2022 Range Rover Sport HSE">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Toyota Prado -->
+            <div class="vehicle-card" data-type="suv family" data-price="8.5" data-year="2019" data-mileage="45000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/toyota-prado.webp" alt="Toyota Prado">
+                </div>
+                <div class="vehicle-details">
+                    <h3>2019 Toyota Land Cruiser Prado</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2019</span>
+                        <span> 45,000 km</span>
+                        <span> 2.8L Diesel</span>
+                    </div>
+                    <div class="price">KES 8,500,000</div>
+                    <div class="mileage">Excellent condition • 7-seater</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2019 Toyota Land Cruiser Prado">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Porsche 911 -->
+            <div class="vehicle-card" data-type="sports" data-price="22.8" data-year="2020" data-mileage="15000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/porsche-911.webp" alt="Porsche 911">
+                    <span class="badge">Limited Edition</span>
+                </div>
+                <div class="vehicle-details">
+                    <h3>2020 Porsche 911 Carrera S</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2020</span>
+                        <span> 15,000 km</span>
+                        <span> 3.0L Twin-Turbo</span>
+                    </div>
+                    <div class="price">KES 22,800,000</div>
+                    <div class="mileage">Garage kept • Full options</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2020 Porsche 911 Carrera S">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BMW X5 -->
+            <div class="vehicle-card" data-type="suv luxury" data-price="10.3" data-year="2020" data-mileage="32000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/bmw-x5.webp" alt="BMW X5">
+                </div>
+                <div class="vehicle-details">
+                    <h3>2020 BMW X5 xDrive40i</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2020</span>
+                        <span> 32,000 km</span>
+                        <span> 3.0L Turbo</span>
+                    </div>
+                    <div class="price">KES 10,300,000 <span class="finance-badge">Financing Available</span></div>
+                    <div class="mileage">One owner • Premium package</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2020 BMW X5 xDrive40i">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Audi A6 -->
+            <div class="vehicle-card" data-type="luxury executive" data-price="7.8" data-year="2018" data-mileage="52000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/audi-a6.webp" alt="Audi A6">
+                    <span class="badge">Great Value</span>
+                </div>
+                <div class="vehicle-details">
+                    <h3>2018 Audi A6 3.0T</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2018</span>
+                        <span> 52,000 km</span>
+                        <span> 3.0L Supercharged</span>
+                    </div>
+                    <div class="pricing">
+                        <span class="original-price">KES 9,200,000</span>
+                        <span class="price">KES 7,800,000</span>
+                    </div>
+                    <div class="mileage">Well maintained • Tech package</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2018 Audi A6 3.0T">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mercedes G-Wagon -->
+            <div class="vehicle-card" data-type="suv luxury" data-price="28.5" data-year="2021" data-mileage="9000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/g-wagon.webp" alt="Mercedes G-Wagon">
+                    <span class="badge">Exclusive</span>
+                </div>
+                <div class="vehicle-details">
+                    <h3>2021 Mercedes G63 AMG</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2021</span>
+                        <span> 9,000 km</span>
+                        <span> 4.0L V8</span>
+                    </div>
+                    <div class="price">KES 28,500,000</div>
+                    <div class="mileage">Like new • Full AMG package</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2021 Mercedes G63 AMG">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Toyota RAV4 -->
+            <div class="vehicle-card" data-type="suv family" data-price="4.2" data-year="2020" data-mileage="38000" data-transmission="automatic">
+                <div class="vehicle-image">
+                    <img src="../../assets/img/vehicles/toyota-rav4.webp" alt="Toyota RAV4">
+                    <span class="badge">Popular</span>
+                </div>
+                <div class="vehicle-details">
+                    <h3>2020 Toyota RAV4 Hybrid</h3>
+                    <div class="specs">
+                        <span> Automatic</span>
+                        <span> 2020</span>
+                        <span> 38,000 km</span>
+                        <span> 2.5L Hybrid</span>
+                    </div>
+                    <div class="price">KES 4,200,000 <span class="finance-badge">Financing Available</span></div>
+                    <div class="mileage">Excellent fuel economy • Safety sense</div>
+                    <div class="vehicle-actions">
+                        <a href="../contact_us.html" class="cta-inquire">Inquire</a>
+                        <a href="../checkout.html" class="cta-buy" data-car="2020 Toyota RAV4 Hybrid">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-column">
+            <h3>Get More</h3>
+            <p>Subscribe to our newsletter for the latest vehicles and special offers.</p>
+        </div>
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about_us.html">About Us</a></li>
+                <li><a href="sales.html">Vehicles</a></li>
+                <li><a href="../contact_us.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Connect</h3>
+            <div class="social-links">
+                <a href="#"><img src="../../assets/img/social/facebook.svg" alt="Facebook" width="24"></a>
+                <a href="#"><img src="../../assets/img/social/twitter.svg" alt="Twitter" width="24"></a>
+                <a href="#"><img src="../../assets/img/social/instagram.svg" alt="Instagram" width="24"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Filter functionality for sales page
+        document.addEventListener('DOMContentLoaded', function() {
+            const filters = {
+                type: document.getElementById('typeFilter'),
+                price: document.getElementById('priceFilter'),
+                year: document.getElementById('yearFilter'),
+                mileage: document.getElementById('mileageFilter'),
+                transmission: document.getElementById('transmissionFilter')
+            };
+            
+            // Add event listeners to all filters
+            Object.values(filters).forEach(filter => {
+                filter.addEventListener('change', filterVehicles);
+            });
+            
+            function filterVehicles() {
+                const typeValue = filters.type.value;
+                const priceValue = filters.price.value;
+                const yearValue = filters.year.value;
+                const mileageValue = filters.mileage.value;
+                const transmissionValue = filters.transmission.value;
+                
+                document.querySelectorAll('.vehicle-card').forEach(card => {
+                    const cardType = card.getAttribute('data-type');
+                    const cardPrice = parseFloat(card.getAttribute('data-price'));
+                    const cardYear = parseInt(card.getAttribute('data-year'));
+                    const cardMileage = parseInt(card.getAttribute('data-mileage'));
+                    const cardTransmission = card.getAttribute('data-transmission');
+                    
+                    let typeMatch = typeValue === 'all' || cardType.includes(typeValue);
+                    let priceMatch = priceValue === 'all' || 
+                        (priceValue === '0-5' && cardPrice <= 5) ||
+                        (priceValue === '5-10' && cardPrice > 5 && cardPrice <= 10) ||
+                        (priceValue === '10-15' && cardPrice > 10 && cardPrice <= 15) ||
+                        (priceValue === '15+' && cardPrice > 15);
+                    let yearMatch = yearValue === 'all' || 
+                        (yearValue === '2020' && cardYear >= 2020) ||
+                        (yearValue === '2018' && cardYear >= 2018 && cardYear < 2020) ||
+                        (yearValue === '2015' && cardYear >= 2015 && cardYear < 2018) ||
+                        (yearValue === '2010' && cardYear >= 2010 && cardYear < 2015);
+                    let mileageMatch = mileageValue === 'all' || 
+                        (mileageValue === '0-20000' && cardMileage <= 20000) ||
+                        (mileageValue === '20000-50000' && cardMileage > 20000 && cardMileage <= 50000) ||
+                        (mileageValue === '50000-100000' && cardMileage > 50000 && cardMileage <= 100000) ||
+                        (mileageValue === '100000+' && cardMileage > 100000);
+                    let transmissionMatch = transmissionValue === 'all' || cardTransmission === transmissionValue;
+                    
+                    if (typeMatch && priceMatch && yearMatch && mileageMatch && transmissionMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Store selected car in localStorage when "Buy Now" is clicked
+            document.querySelectorAll('.cta-buy').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const carName = this.getAttribute('data-car');
+                    if (carName) {
+                        localStorage.setItem('selectedCar', carName);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

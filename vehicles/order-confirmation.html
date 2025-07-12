@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation | Velocity Motors</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --success: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: Arial, sans-serif; color: #333; background: #f8f9fa; }
+
+        .top-bar { background: var(--primary); color: white; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; }
+        .contact-info { display: flex; gap: 20px; font-size: 14px; }
+        .action-buttons { display: flex; gap: 15px; }
+        .action-buttons a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; }
+        .login-btn { background: var(--secondary); }
+        .rental-btn, .sales-btn, .prices-btn { background: transparent; border: 1px solid white; }
+
+        nav { background: white; padding: 15px 5%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 30px 20px; }
+
+        .success-header { text-align: center; margin-bottom: 40px; }
+        .success-icon { width: 80px; height: 80px; background: var(--success); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; }
+        .success-header h1 { color: var(--success); font-size: 32px; margin-bottom: 10px; }
+        .success-header p { color: #666; font-size: 18px; }
+
+        .order-details { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .order-header { background: var(--primary); color: white; padding: 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .order-number { font-size: 18px; font-weight: bold; }
+        .order-date { font-size: 14px; opacity: 0.9; }
+
+        .order-content { padding: 30px; }
+        .section { margin-bottom: 30px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 18px; font-weight: bold; color: var(--primary); margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+
+        .vehicle-summary { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
+        .vehicle-image { width: 120px; height: 80px; border-radius: 8px; object-fit: cover; }
+        .vehicle-info h3 { color: var(--primary); margin-bottom: 5px; }
+        .vehicle-specs { display: flex; gap: 15px; font-size: 14px; color: #666; }
+
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { font-weight: 500; color: #666; }
+        .detail-value { font-weight: 600; color: var(--dark); }
+
+        .price-breakdown { background: #f8f9fa; padding: 20px; border-radius: 8px; }
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .price-row.total { font-size: 20px; font-weight: bold; color: var(--primary); border-top: 2px solid #ddd; padding-top: 15px; margin-top: 15px; }
+        .price-row.total .amount { color: var(--secondary); }
+
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+
+        .action-buttons-section { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
+        .btn { padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none; text-align: center; cursor: pointer; border: none; font-size: 14px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn:hover { opacity: 0.9; }
+
+        .contact-support { background: #e3f2fd; padding: 20px; border-radius: 8px; text-align: center; margin-top: 30px; }
+        .contact-support h3 { color: var(--primary); margin-bottom: 10px; }
+        .contact-support p { color: #666; margin-bottom: 15px; }
+        .contact-info-grid { display: flex; justify-content: center; gap: 30px; font-size: 14px; }
+
+        footer { background: var(--primary); color: white; padding: 50px 5%; margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .footer-column h3 { margin-bottom: 20px; }
+        .footer-column ul { list-style: none; }
+        .footer-column ul li { margin-bottom: 10px; }
+        .footer-column ul li a { color: #bdc3c7; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .vehicle-summary { flex-direction: column; text-align: center; }
+            .action-buttons-section { flex-direction: column; }
+            .contact-info-grid { flex-direction: column; gap: 15px; }
+            footer { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="contact-info">
+            <span>Phone: +254 757 888 000</span>
+            <span>info@velocitymotors.com</span>
+            <span>Mon-Sat: 09:00 - 17:00</span>
+        </div>
+        <div class="action-buttons">
+            <a href="../auth/login.html" class="login-btn">Login</a>
+            <a href="rental.html" class="rental-btn">Rental</a>
+            <a href="../prices.html" class="prices-btn">Prices</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">VELOCITY MOTORS</div>
+        <div class="nav-links">
+            <a href="../index.html">HOME</a>
+            <a href="../about_us.html">ABOUT US</a>
+            <a href="sales.html">VEHICLES</a>
+            <a href="../contact_us.html">CONTACT</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Success Header -->
+        <div class="success-header">
+            <div class="success-icon">✓</div>
+            <h1>Booking Confirmed!</h1>
+            <p>Thank you for choosing Velocity Motors. Your rental booking has been successfully confirmed.</p>
+        </div>
+
+        <!-- Order Details -->
+        <div class="order-details">
+            <div class="order-header">
+                <div>
+                    <div class="order-number">Order #<span id="orderNumber">VM-2024-001</span></div>
+                    <div class="order-date">Booked on <span id="orderDate">January 7, 2025</span></div>
+                </div>
+                <div class="status-badge status-confirmed">Confirmed</div>
+            </div>
+
+            <div class="order-content">
+                <!-- Vehicle Information -->
+                <div class="section">
+                    <h3 class="section-title">Vehicle Details</h3>
+                    <div class="vehicle-summary">
+                        <img id="vehicleImage" src="https://placehold.co/120x80" alt="Selected Vehicle" class="vehicle-image">
+                        <div class="vehicle-info">
+                            <h3 id="vehicleName">Mercedes-Benz E200</h3>
+                            <div class="vehicle-specs">
+                                <span id="vehicleTransmission">Automatic</span>
+                                <span>•</span>
+                                <span id="vehicleSeats">5 Seats</span>
+                                <span>•</span>
+                                <span id="vehicleEngine">2.0L Turbo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Information -->
+                <div class="section">
+                    <h3 class="section-title">Booking Information</h3>
+                    <div class="detail-grid">
+                        <div>
+                            <div class="detail-item">
+                                <span class="detail-label">Pickup Date:</span>
+                                <span class="detail-value" id="pickupDate">Jan 10, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Pickup Time:</span>
+                                <span class="detail-value" id="pickupTime">10:00 AM</span>
+                            </div> 
+                        </div>
+                        <div>
+                            <div class="detail-item">
+                                <span class="detail-label">Return Date:</span>
+                                <span class="detail-value" id="returnDate">Jan 12, 2025</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Return Time:</span>
+                                <span class="detail-value" id="returnTime">10:00 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Rental Duration:</span>
+                        <span class="detail-value" id="rentalDuration">2 Days</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Driver Age:</span>
+                        <span class="detail-value" id="driverAge">26-30 years</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Additional Drivers:</span>
+                        <span class="detail-value" id="additionalDrivers">0</span>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="section">
+                    <h3 class="section-title">Payment Summary</h3>
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>Vehicle Rental (<span id="totalDays">2</span> days)</span>
+                            <span>KES <span id="subtotalAmount">240,000</span></span>
+                        </div>
+                        <div class="price-row">
+                            <span>Additional Services</span>
+                            <span>KES <span id="additionalFees">0</span></span>
+                        </div>
+                        <div class="price-row">
+                            <span>Insurance (10%)</span>
+                            <span>KES <span id="insuranceAmount">24,000</span></span>
+                        </div>
+                        <div class="price-row">
+                            <span>VAT (16%)</span>
+                            <span>KES <span id="taxAmount">38,400</span></span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total Amount</span>
+                            <span class="amount">KES <span id="totalAmount">302,400</span></span>
+                        </div>
+                    </div>
+                    <div class="detail-item" style="margin-top: 15px;">
+                        <span class="detail-label">Payment Method:</span>
+                        <span class="detail-value" id="paymentMethod">Credit/Debit Card</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Payment Status:</span>
+                        <span class="detail-value"><span class="status-badge status-pending">Pending</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-section">
+            <button class="btn btn-primary" onclick="window.print()">Print Receipt</button>
+            <a href="rental.html" class="btn btn-secondary">Book Another Vehicle</a>
+            <button class="btn btn-secondary" onclick="downloadReceipt()">Download PDF</button>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="contact-support">
+            <h3>Need Help?</h3>
+            <p>Our customer support team is here to assist you with any questions about your booking.</p>
+            <div class="contact-info-grid">
+                <span><strong>Phone:</strong> +254 757 888 000</span>
+                <span><strong>Email:</strong> support@velocitymotors.com</span>
+                <span><strong>WhatsApp:</strong> +254 757 888 000</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-column">
+            <h3>Get More</h3>
+            <p>Subscribe to our newsletter for the latest vehicles and offers.</p>
+        </div>
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about_us.html">About Us</a></li>
+                <li><a href="sales.html">Vehicles</a></li>
+                <li><a href="../contact_us.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Connect</h3>
+            <div class="social-links">
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Vehicle data (same as booking page)
+        const vehicles = {
+            'mercedes-e200': { name: 'Mercedes-Benz E200', image: 'https://placehold.co/120x80', price: 120000, specs: { transmission: 'Automatic', seats: '5 Seats', engine: '2.0L Turbo', fuel: 'Petrol' } },
+            'range-rover': { name: 'Range Rover Vogue', image: 'https://placehold.co/120x80', price: 180000, specs: { transmission: 'Automatic', seats: '5 Seats', engine: '3.0L Diesel', fuel: 'Diesel' } },
+            'porsche-911': { name: 'Porsche 911 Carrera', image: 'https://placehold.co/120x80', price: 250000, specs: { transmission: 'Automatic', seats: '2 Seats', engine: '3.0L Twin-Turbo', fuel: 'Petrol' } },
+            'land-cruiser': { name: 'Toyota Land Cruiser', image: 'https://placehold.co/120x80', price: 150000, specs: { transmission: 'Automatic', seats: '7 Seats', engine: '4.5L V8', fuel: 'Petrol' } },
+            'bmw-7series': { name: 'BMW 740i', image: 'https://placehold.co/120x80', price: 140000, specs: { transmission: 'Automatic', seats: '5 Seats', engine: '3.0L Turbo', fuel: 'Petrol' } },
+            'audi-q7': { name: 'Audi Q7', image: 'https://placehold.co/120x80', price: 160000, specs: { transmission: 'Automatic', seats: '7 Seats', engine: '3.0L TDI', fuel: 'Diesel' } },
+            'g-wagon': { name: 'Mercedes G63 AMG', image: 'https://placehold.co/120x80', price: 220000, specs: { transmission: 'Automatic', seats: '5 Seats', engine: '4.0L V8', fuel: 'Petrol' } },
+            'ferrari-488': { name: 'Ferrari 488 GTB', image: 'https://placehold.co/120x80', price: 300000, specs: { transmission: 'Automatic', seats: '2 Seats', engine: '3.9L V8', fuel: 'Petrol' } }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderData();
+            generateOrderNumber();
+        });
+
+        function loadOrderData() {
+            // Get booking data from localStorage
+            const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+            
+            if (bookingData) {
+                // Find vehicle data
+                const vehicleKey = Object.keys(vehicles).find(key => 
+                    vehicles[key].name === bookingData.vehicle
+                );
+                const vehicle = vehicles[vehicleKey];
+
+                if (vehicle) {
+                    // Update vehicle information
+                    document.getElementById('vehicleImage').src = vehicle.image;
+                    document.getElementById('vehicleName').textContent = vehicle.name;
+                    document.getElementById('vehicleTransmission').textContent = vehicle.specs.transmission;
+                    document.getElementById('vehicleSeats').textContent = vehicle.specs.seats;
+                    document.getElementById('vehicleEngine').textContent = vehicle.specs.engine;
+                }
+
+                // Update booking details
+                document.getElementById('pickupDate').textContent = formatDate(bookingData.pickupDate);
+                document.getElementById('returnDate').textContent = formatDate(bookingData.returnDate);
+                document.getElementById('pickupTime').textContent = formatTime(bookingData.pickupTime);
+                document.getElementById('returnTime').textContent = formatTime(bookingData.returnTime);
+                document.getElementById('pickupLocation').textContent = bookingData.pickupLocation;
+                document.getElementById('returnLocation').textContent = bookingData.returnLocation;
+                document.getElementById('driverAge').textContent = bookingData.driverAge;
+                document.getElementById('additionalDrivers').textContent = bookingData.additionalDrivers;
+                document.getElementById('paymentMethod').textContent = formatPaymentMethod(bookingData.paymentMethod);
+
+                // Update duration and pricing
+                const days = bookingData.totalDays || 1;
+                document.getElementById('rentalDuration').textContent = `${days} Day${days > 1 ? 's' : ''}`;
+                document.getElementById('totalDays').textContent = days;
+                
+                // Calculate and display pricing
+                const subtotal = vehicle ? vehicle.price * days : 0;
+                const insurance = Math.round(subtotal * 0.1);
+                const tax = Math.round(subtotal * 0.16);
+                const total = subtotal + insurance + tax;
+
+                document.getElementById('subtotalAmount').textContent = subtotal.toLocaleString();
+                document.getElementById('additionalFees').textContent = '0';
+                document.getElementById('insuranceAmount').textContent = insurance.toLocaleString();
+                document.getElementById('taxAmount').textContent = tax.toLocaleString();
+                document.getElementById('totalAmount').textContent = total.toLocaleString();
+            }
+        }
+
+        function generateOrderNumber() {
+            // Generate a unique order number
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            
+            const orderNumber = `VM-${year}${month}${day}-${random}`;
+            document.getElementById('orderNumber').textContent = orderNumber;
+            
+            // Set current date
+            document.getElementById('orderDate').textContent = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        function formatPaymentMethod(method) {
+            const methods = {
+                'card': 'Credit/Debit Card',
+                'mpesa': 'M-Pesa',
+                'bank': 'Bank Transfer'
+            };
+            return methods[method] || method;
+        }
+
+        function downloadReceipt() {
+            // In a real application, this would generate and download a PDF
+            alert('PDF download functionality would be implemented here.\n\nFor now, you can use the Print option to save as PDF.');
+        }
+
+        // Clear booking data after successful display (optional)
+        // localStorage.removeItem('bookingData');
+    </script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Fleet | Velocity Motors</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .top-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .contact-info {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .action-buttons a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .login-btn {
+            background-color: var(--secondary);
+        }
+        .rental-btn, .sales-btn, .prices-btn {
+            background-color: transparent;
+            border: 1px solid white;
+        }
+        nav {
+            background-color: white;
+            padding: 15px 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+              url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf') center/cover no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 50vh;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5%;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #f1f1f1;
+        }
+
+        .rental-container {
+            padding: 50px 5%;
+            display: flex;
+            gap: 30px;
+        }
+        .filter-sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .filter-sidebar h3 {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .vehicle-results {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .vehicle-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+        }
+        .vehicle-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .vehicle-card:hover .vehicle-image img {
+            transform: scale(1.05);
+        }
+        .vehicle-details {
+            padding: 20px;
+        }
+        .vehicle-details h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        .specs {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .specs span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .pricing {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        .price small {
+            font-size: 14px;
+            color: #666;
+            font-weight: normal;
+        }
+        .cta-rent {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .cta-rent:hover {
+            background-color: var(--secondary);
+        }
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 5%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        .footer-column ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+        }
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .rental-container {
+                flex-direction: column;
+            }
+            .filter-sidebar {
+                width: 100%;
+            }
+            .vehicle-results {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+        }
+        .filter-btn {
+               background-color: #00274d;
+               color: white;
+               padding: 10px 20px;
+               border: none;
+               border-radius: 6px;
+               cursor: pointer;
+               width: 100%;
+               font-size: 16px;
+               margin-top: 15px;
+               transition: background-color 0.3s ease;
+        }
+
+        .filter-btn:hover {
+              background-color: #004080;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Contact Info and Action Buttons -->
+    <div class="top-bar">
+        <div class="contact-info">
+            <span>Phone: +254 757 888 000</span>
+            <span>info@velocitymotors.com</span>
+            <span>Mon-Sat: 09:00 - 17:00</span>
+        </div>
+        <div class="action-buttons">
+            <a href="../auth/login.html" class="login-btn">Login</a>
+            <a href="rental.html" class="rental-btn">Rental</a>
+            <a href="../prices.html" class="prices-btn">Prices</a>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">VELOCITY MOTORS</div>
+        <div class="nav-links">
+            <a href="../index.html">HOME</a>
+            <a href="../about_us.html">ABOUT US</a>
+            <a href="rental.html">VEHICLES</a>
+            <a href="../contact_us.html">CONTACT</a>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>PREMIUM RENTAL FLEET</h1>
+            <p>Choose from our exclusive collection of luxury and performance vehicles</p>
+        </div>
+    </section>
+    <!-- Main Rental Content -->
+    <div class="rental-container">
+        <!-- Filter Sidebar -->
+        <div class="filter-sidebar">
+            <h3>Filter Vehicles</h3>
+                        
+            <div class="filter-group">
+                <label>Car Type:</label>
+                <select id="typeFilter">
+                    <option value="all">All Vehicles</option>
+                    <option value="luxury">Luxury Sedans</option>
+                    <option value="suv">SUVs</option>
+                    <option value="sports">Sports Cars</option>
+                    <option value="executive">Executive</option>
+                </select>
+            </div>
+                        
+            <div class="filter-group">
+                <label>Price Range:</label>
+                <select id="priceFilter">
+                    <option value="all">All Prices</option>
+                    <option value="0-100">Under KES 100,000</option>
+                    <option value="100-150">KES 100,000 - 150,000</option>
+                    <option value="150-200">KES 150,000 - 200,000</option>
+                    <option value="200+">KES 200,000+</option>
+                </select>
+            </div>
+                        
+            <div class="filter-group">
+                <label>Transmission:</label>
+                <select id="transmissionFilter">
+                    <option value="all">All</option>
+                    <option value="automatic">Automatic</option>
+                    <option value="manual">Manual</option>
+                </select>
+            </div>
+                        
+            <div class="filter-group">
+                <label>Seating Capacity:</label>
+                <select id="seatsFilter">
+                    <option value="all">All</option>
+                    <option value="2">2 Seats</option>
+                    <option value="4">4 Seats</option>
+                    <option value="5">5 Seats</option>
+                    <option value="7">7+ Seats</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                 <button onclick="applyFilters()" class="filter-btn">Search</button>
+            </div>
+
+        </div>
+        <!-- Vehicle Results -->
+        <div class="vehicle-results">
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-column">
+            <h3>Get More</h3>
+            <p>Subscribe to our newsletter for the latest vehicles and offers.</p>
+        </div>
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about_us.html">About Us</a></li>
+                <li><a href="rental.html">Vehicles</a></li>
+                <li><a href="../contact_us.html">Contact</a></li>
+                <li><a href="../partnership.html">Partnership</a></li>
+                <li><a href="../termsandcondition.html">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Connect</h3>
+            <div class="social-links">
+                <a href="#"><img src="../facebook.png" alt="Facebook" width="24"></a>
+                <a href="#"><img src="../twitter.png" alt="Twitter" width="24"></a>
+                <a href="#"><img src="../instagram.png" alt="Instagram" width="24"></a>
+            </div>
+        </div>
+    </footer>
+       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Basic filter functionality
+        document.addEventListener('DOMContentLoaded', async function() {
+            const response = await axios.get('../php/carlist.php');
+            const vehiclecontainer = document.querySelector('.vehicle-results');
+            console.log('Vehicle Container:', vehiclecontainer);
+             console.log('API Response:', response.data);
+              const cars = response.data;
+              let carHtml = '';
+              cars.forEach((car)=>{
+                  carHtml += `
+                   <div class="vehicle-card">
+                       <div class="vehicle-image">
+                           <img src="../${car.image}" alt="${car.carname}">
+                       </div>
+                       <div class="vehicle-details">
+                           <h3>${car.carname}</h3>
+                           <div class="specs">
+                               <span>⚙️ ${car.transmission}</span>
+                               <span>👥 ${car.capacity} Seats</span>
+                            
+                           </div>
+                           <div class="pricing">
+                               <div class="price">KES ${car.price} <small>/day</small></div>
+                               <button class="cta-rent" onclick="selectVehicle('${car.id}')">Rent Now</button>
+                           </div>
+                       </div>
+                   </div>
+                 `;
+                 
+              })
+              console.log('Car HTML:', carHtml);
+              vehiclecontainer.innerHTML = carHtml;
+              
+            const filters = {
+                type: document.getElementById('typeFilter'),
+                price: document.getElementById('priceFilter'),
+                transmission: document.getElementById('transmissionFilter'),
+                seats: document.getElementById('seatsFilter')
+            };
+                
+            // Add event listeners to all filters
+            Object.values(filters).forEach(filter => {
+                filter.addEventListener('change', filterVehicles);
+            });
+                
+            function filterVehicles() {
+                const typeValue = filters.type.value;
+                const priceValue = filters.price.value;
+                const transmissionValue = filters.transmission.value;
+                const seatsValue = filters.seats.value;
+           
+                document.querySelectorAll('.vehicle-card').forEach(card => {
+                    const cardType = card.getAttribute('data-type');
+                    const cardPrice = parseInt(card.getAttribute('data-price'));
+                    const cardTransmission = card.getAttribute('data-transmission');
+                    const cardSeats = card.getAttribute('data-seats');
+                                    
+                    let typeMatch = typeValue === 'all' || cardType.includes(typeValue);
+                    let priceMatch = priceValue === 'all' ||
+                         (priceValue === '0-100' && cardPrice <= 100) ||
+                        (priceValue === '100-150' && cardPrice > 100 && cardPrice <= 150) ||
+                        (priceValue === '150-200' && cardPrice > 150 && cardPrice <= 200) ||
+                        (priceValue === '200+' && cardPrice > 200);
+                    let transmissionMatch = transmissionValue === 'all' || cardTransmission === transmissionValue;
+                    let seatsMatch = seatsValue === 'all' || cardSeats === seatsValue;
+                    
+                    if (typeMatch && priceMatch && transmissionMatch && seatsMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+        }
+    
+        
+    );
+
+        // Function to handle vehicle selection and redirect to booking page
+        function selectVehicle(vehicleKey) {
+            console.log('Selected vehicle:', vehicleKey); // Debug log
+            
+            // Store selected vehicle in localStorage for backup
+            localStorage.setItem('selectedVehicle', vehicleKey);
+            
+            // Redirect to booking page with vehicle parameter
+            window.location.href = `booking.html?vehicle=${vehicleKey}}`;
+        }
+
+        // Test function to verify it's working
+        function testRedirect() {
+            console.log('Test redirect function called');
+            selectVehicle('mercedes-e200');
+        }
+        
+        
+
+        
+
+
+
+    </script>
+</body>
+</html>

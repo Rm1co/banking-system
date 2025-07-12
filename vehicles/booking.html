@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Booking | Velocity Motors</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: Arial, sans-serif; color: #333; background: #f8f9fa; }
+
+        .top-bar { background: var(--primary); color: white; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; }
+        .contact-info { display: flex; gap: 20px; font-size: 14px; }
+        .action-buttons { display: flex; gap: 15px; }
+        .action-buttons a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; }
+        .login-btn { background: var(--secondary); }
+        .rental-btn, .sales-btn, .prices-btn { background: transparent; border: 1px solid white; }
+
+        nav { background: white; padding: 15px 5%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 32px; color: var(--primary); margin-bottom: 10px; }
+        .page-header p { color: #666; }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; margin-bottom: 20px; font-weight: 500; }
+        .back-link:hover { color: var(--secondary); }
+
+        .booking-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .vehicle-section, .booking-form { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .vehicle-image { width: 100%; height: 300px; object-fit: cover; }
+        .vehicle-details { padding: 25px; }
+        .vehicle-name { font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 20px; }
+
+        .vehicle-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .spec-item { display: flex; align-items: center; gap: 8px; color: #666; font-size: 14px; }
+        .spec-icon { width: 16px; height: 16px; background: var(--secondary); border-radius: 50%; }
+
+        .features h3 { font-size: 16px; color: var(--primary); margin-bottom: 10px; }
+        .features-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .feature-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #666; }
+        .feature-dot { width: 4px; height: 4px; background: var(--secondary); border-radius: 50%; }
+
+        .form-section { padding: 25px; border-bottom: 1px solid #eee; }
+        .form-section:last-child { border-bottom: none; }
+        .section-title { font-size: 18px; font-weight: bold; color: var(--primary); margin-bottom: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+
+        .payment-options { display: flex; flex-direction: column; gap: 10px; }
+        .payment-option { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.3s; }
+        .payment-option:hover { border-color: var(--primary); background: #f8f9fa; }
+        .payment-option.selected { border-color: var(--primary); background: #f0f7ff; }
+        .payment-icon { width: 20px; height: 20px; border-radius: 50%; }
+        .card-icon { background: #4285f4; }
+        .mpesa-icon { background: #00a86b; }
+        .bank-icon { background: #1976d2; }
+
+        .payment-details { margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none; }
+        .payment-details.active { display: block; }
+
+        .price-summary { background: #f8f9fa; }
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .price-row.total { font-size: 18px; font-weight: bold; color: var(--primary); border-top: 1px solid #ddd; padding-top: 10px; margin-top: 15px; }
+        .price-row.total .amount { color: var(--secondary); }
+
+        .confirm-btn { width: 100%; background: var(--primary); color: white; padding: 15px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 20px; }
+        .confirm-btn:hover { background: var(--secondary); }
+        .terms-text { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
+
+        footer { background: var(--primary); color: white; padding: 50px 5%; margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .footer-column h3 { margin-bottom: 20px; }
+        .footer-column ul { list-style: none; }
+        .footer-column ul li { margin-bottom: 10px; }
+        .footer-column ul li a { color: #bdc3c7; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .booking-layout, .form-grid, .vehicle-specs, .features-list { grid-template-columns: 1fr; }
+            footer { grid-template-columns: 1fr; }
+            .contact-info { flex-direction: column; gap: 10px; }
+            .action-buttons { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="contact-info">
+            <span>Phone: +254 757 888 000</span>
+            <span>info@velocitymotors.com</span>
+            <span>Mon-Sat: 09:00 - 17:00</span>
+        </div>
+        <div class="action-buttons">
+            <a href="../auth/login.html" class="login-btn">Login</a>
+            <a href="rental.html" class="rental-btn">Rental</a>
+            <a href="../prices.html" class="prices-btn">Prices</a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">VELOCITY MOTORS</div>
+        <div class="nav-links">
+            <a href="../index.html">HOME</a>
+            <a href="../about_us.html">ABOUT US</a>
+            <a href="rental.html">VEHICLES</a>
+            <a href="../contact_us.html">CONTACT</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <a href="rental.html" class="back-link">← Back to Vehicle Selection</a>
+        
+        <div class="page-header">
+            <h1>Complete Your Booking</h1>
+            <p>Review your selection and provide booking details</p>
+        </div>
+
+        <div class="booking-layout">
+            <!-- Vehicle Details -->
+            <div class="vehicle-section">
+                <img id="vehicleImage" src="https://placehold.co/800x600" alt="Selected vehicle" class="vehicle-image">
+                <div class="vehicle-details">
+                    <h2 id="vehicleName" class="vehicle-name">Mercedes-Benz E200</h2>
+                    
+                    <div class="vehicle-specs">
+                        <div class="spec-item"><div class="spec-icon"></div><span id="vehicleTransmission">Automatic</span></div>
+                        <div class="spec-item"><div class="spec-icon"></div><span id="vehicleSeats">5 Seats</span></div>
+                        <div class="spec-item"><div class="spec-icon"></div><span id="vehicleEngine">2.0L Turbo</span></div>
+                        <div class="spec-item"><div class="spec-icon"></div><span id="vehicleFuel">Petrol</span></div>
+                    </div>
+
+                    <div class="features">
+                        <h3>Features Included:</h3>
+                        <div id="vehicleFeatures" class="features-list">
+                            <div class="feature-item"><div class="feature-dot"></div><span>GPS Navigation</span></div>
+                            <div class="feature-item"><div class="feature-dot"></div><span>Leather Seats</span></div>
+                            <div class="feature-item"><div class="feature-dot"></div><span>Sunroof</span></div>
+                            <div class="feature-item"><div class="feature-dot"></div><span>Premium Sound</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <form class="booking-form" id="bookingForm">
+                <!-- Booking Details -->
+                <div class="form-section">
+                    <h3 class="section-title">Booking Details</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="pickupDate">Pickup Date</label>
+                            <input type="date" id="pickupDate" name="pickupDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDate">Return Date</label>
+                            <input type="date" id="returnDate"  name="returnDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="pickupTime">Pickup Time</label>
+                            <select id="pickupTime" name="pickupTime" required>
+                                <option value="">Select time</option>
+                                <option value="09:00">09:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">01:00 PM</option>
+                                <option value="14:00">02:00 PM</option>
+                                <option value="15:00">03:00 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                                <option value="17:00">05:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnTime">Return Time</label>
+                            <select id="returnTime" required name="returnTime">
+                                <option value="">Select time</option>
+                                <option value="09:00">09:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="12:00">12:00 PM</option>
+                                <option value="13:00">01:00 PM</option>
+                                <option value="14:00">02:00 PM</option>
+                                <option value="15:00">03:00 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                                <option value="17:00">05:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="driverAge">Driver Age</label>
+                            <select id="driverAge" required  name="driverAge">
+                                <option value="">Select age</option>
+                                <option value="21-25">21-25 years</option>
+                                <option value="26-30">26-30 years</option>
+                                <option value="31-40">31-40 years</option>
+                                <option value="41+">41+ years</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalDrivers">Additional Drivers</label>
+                            <select id="additionalDrivers" name="additionalDrivers">
+                                <option value="0">0</option>
+                                <option value="1" data-fee="2000">1 (+KES 2,000/day)</option>
+                                <option value="2" data-fee="4000">2 (+KES 4,000/day)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="form-section">
+                    <h3 class="section-title">Payment Method</h3>
+                    <div class="payment-options">
+                        <div class="payment-option selected" data-method="card">
+                            <input type="radio" name="payment" value="card" checked style="display: none;">
+                            <div class="payment-icon card-icon"></div>
+                            <span>Credit/Debit Card</span>
+                        </div>
+                        <div class="payment-option" data-method="mpesa">
+                            <input type="radio" name="payment" value="mpesa" style="display: none;">
+                            <div class="payment-icon mpesa-icon"></div>
+                            <span>M-Pesa</span>
+                        </div>
+                        <div class="payment-option" data-method="bank">
+                            <input type="radio" name="payment" value="bank" style="display: none;">
+                            <div class="payment-icon bank-icon"></div>
+                            <span>Bank Transfer</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details Forms -->
+                    <div id="cardDetails" class="payment-details active">
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="expiryDate">Expiry Date</label>
+                                <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Cardholder Name</label>
+                            <input type="text" id="cardName" placeholder="John Doe">
+                        </div>
+                    </div>
+
+                    <div id="mpesaDetails" class="payment-details">
+                        <div class="form-group">
+                            <label for="mpesaNumber">M-Pesa Phone Number</label>
+                            <input type="tel" id="mpesaNumber" name="mpesaNumber" placeholder="254712345678">
+                        </div>
+                        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                            You will receive an M-Pesa prompt on your phone to complete the payment.
+                        </p>
+                    </div>
+
+                    <div id="bankDetails" class="payment-details">
+                        <div class="form-group">
+                            <label for="accountNumber">Account Number</label>
+                            <input type="text" id="accountNumber" placeholder="1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label for="bankName">Bank Name</label>
+                            <select id="bankName">
+                                <option value="">Select Bank</option>
+                                <option value="kcb">KCB Bank</option>
+                                <option value="equity">Equity Bank</option>
+                                <option value="coop">Co-operative Bank</option>
+                                <option value="absa">Absa Bank</option>
+                                <option value="standard">Standard Chartered</option>
+                            </select>
+                        </div>
+                        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                            Bank transfer details will be provided after booking confirmation.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Price Summary -->
+                <div class="form-section price-summary">
+                    <h3 class="section-title">Price Summary</h3>
+                    
+                    <div class="price-row">
+                        <span>Rental (<span id="totalDays">1</span> day<span id="daysPlural" style="display: none;">s</span>)</span>
+                        <span class="price-cost">KES <span id="subtotalAmount"></span></span>
+                    </div>
+                    
+                    <div class="price-row">
+                        <span>Additional Services</span>
+                        <span>KES <span id="additionalFees">0</span></span>
+                    </div>
+                    
+                    <div class="price-row">
+                        <span>Insurance (10%)</span>
+                        <span>KES <span id="insuranceAmount"></span></span>
+                    </div>
+                    
+                    <div class="price-row">
+                        <span>VAT (16%)</span>
+                        <span>KES <span id="taxAmount"></span></span>
+                    </div>
+                    
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span class="amount">KES <span id="totalAmount"></span></span>
+                    </div>
+
+                    <button class="confirm-btn" type="submit">Confirm Booking</button>
+                    
+                    <p class="terms-text">
+                        By confirming, you agree to our <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-column">
+            <h3>Get More</h3>
+            <p>Subscribe to our newsletter for the latest vehicles and offers.</p>
+        </div>
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about_us.html">About Us</a></li>
+                <li><a href="rental.html">Vehicles</a></li>
+                <li><a href="../contact_us.html">Contact</a></li>
+                <li><a href="../partnership.html">Partnership</a></li>
+                <li><a href="../termsandcondition.html">Terms & Conditions</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h3>Connect</h3>
+            <div class="social-links">
+                <a href="#"><img src="../facebook.png" alt="Facebook" width="24"></a>
+                <a href="#"><img src="../twitter.png" alt="Twitter" width="24"></a>
+                <a href="#"><img src="../instagram.png" alt="Instagram" width="24"></a>
+            </div>
+        </div>
+    </footer>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Vehicle data (condensed)
+         let carPrice ;
+         let totalDays = 1; 
+         let carid;
+
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userid =  localStorage.getItem('userid');
+            const form = document.getElementById('bookingForm');
+            console.log(userid);
+            const selectedVehicle = urlParams.get('vehicle') || localStorage.getItem('selectedVehicle') || 'mercedes-e200';
+            const vehiclesection =document.querySelector('.vehicle-section');
+            const pricecost = document.querySelector('.price-cost');
+            const  response = await axios.get(`../php/selectcar.php?carId=${selectedVehicle}&userid=${userid}`); 
+            console.log(response.data);
+            if(response.data.status && response.data.status === 'unauthorized') {
+                alert('Please login or sign up first.');
+                window.location.href ='../auth/login.html'
+                return;
+            }
+            const carData = response.data;
+            let features = JSON.parse(carData.feature);
+             carPrice =carData.price;
+             carid = carData.id;
+           pricecost.innerHTML = `KES ${carPrice.toLocaleString()}`;
+    
+            const carHtml =` <img id="vehicleImage" src="../${carData.image}" alt="Selected vehicle" class="vehicle-image">
+                <div class="vehicle-details">
+                    <h2 id="vehicleName" class="vehicle-name">${carData.carname}</h2>
+                    
+                    <div class="vehicle-specs">
+                        <div class="spec-item"><div class="spec-icon"></div><span id="vehicleTransmission">Transmission:${carData.transmission}</span></div>
+                        <div class="spec-item"><div class="spec-icon"></div><span id="vehicleSeats">Capacity:${carData.capacity}</span></div>
+                       
+                    </div>
+
+                    <div class="features">
+                        <h3>Features Included:</h3>
+                        <div id="vehicleFeatures" class="features-list">
+                            ${features.map((singleFeature) => 
+                                  `<div class="feature-item">
+                                  <div class="feature-dot"></div>
+                                    <span>${singleFeature}</span>
+                                     </div>`
+                                 ).join('')}
+                        </div>
+                    </div>
+                </div>
+            `
+            vehiclesection.innerHTML = carHtml;
+            setupEventListeners();
+            setMinDates();
+            calculateTotal();
+
+            form.addEventListener('submit', async (e)=>{
+                await handleSubmit(e)
+            })
+        });
+
+        
+        function setupEventListeners() {
+            document.getElementById('pickupDate').addEventListener('change', calculateDays);
+            document.getElementById('returnDate').addEventListener('change', calculateDays);
+            document.getElementById('additionalDrivers').addEventListener('change',()=>{
+             calculateTotal()
+            } );
+            
+            // Payment option selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    this.querySelector('input[type="radio"]').checked = true;
+                    
+                    // Show/hide payment details
+                    const method = this.dataset.method;
+                    document.querySelectorAll('.payment-details').forEach(detail => {
+                        detail.classList.remove('active');
+                    });
+                    document.getElementById(method + 'Details').classList.add('active');
+                });
+            });
+
+            // Format card number input
+            document.getElementById('cardNumber').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                e.target.value = formattedValue;
+            });
+
+            // Format expiry date input
+            document.getElementById('expiryDate').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+
+            // Format CVV input
+            document.getElementById('cvv').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+
+            // Format M-Pesa number
+            document.getElementById('mpesaNumber').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+        }
+
+        function setMinDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('pickupDate').min = today;
+            document.getElementById('returnDate').min = today;
+        }
+
+        function calculateDays() {
+            const pickupDate = document.getElementById('pickupDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+            
+            if (pickupDate && returnDate) {
+                const pickup = new Date(pickupDate);
+                const returnD = new Date(returnDate);
+                totalDays = returnD > pickup ? Math.ceil((returnD - pickup) / (1000 * 60 * 60 * 24)) : 1;
+                document.getElementById('totalDays').textContent = totalDays;
+                document.getElementById('daysPlural').style.display = totalDays > 1 ? 'inline' : 'none';
+                calculateTotal();
+            }
+        }
+
+        function calculateTotal() {
+            
+            console.log(carPrice)
+            console.log(totalDays);
+            const subtotal = carPrice * totalDays;
+            console.log(subtotal);
+            additionalFees = 0;
+            
+            // Calculate additional driver fees
+            const additionalDrivers = document.getElementById('additionalDrivers');
+            if (additionalDrivers.value !== '0') {
+                const driverFee = parseInt(additionalDrivers.options[additionalDrivers.selectedIndex].dataset.fee || 0) * totalDays;
+                additionalFees += driverFee;
+            }
+            
+            const insurance = Math.round(subtotal * 0.1);
+            const tax = Math.round(subtotal * 0.16);
+            const total = subtotal + additionalFees + insurance + tax;
+            
+            
+            document.getElementById('additionalFees').textContent = additionalFees.toLocaleString();
+            document.getElementById('insuranceAmount').textContent = insurance.toLocaleString();
+            document.getElementById('taxAmount').textContent = tax.toLocaleString();
+            document.getElementById('totalAmount').textContent = total.toLocaleString();
+        }
+
+        
+         async function handleSubmit(e){
+            e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const pickupDate = formData.get('pickupDate');
+        const returnDate = formData.get('returnDate');
+        const pickupTime = formData.get('pickupTime');
+        const returnTime = formData.get('returnTime');
+        const additionalDrivers = formData.get('additionalDrivers');
+        const mpesaNumber = formData.get('mpesaNumber');
+
+        await calculateTotal(); 
+          const totalAmountRaw = document.getElementById('totalAmount').innerText || '0';
+            const totalAmount = parseInt(totalAmountRaw.replace(/,/g, '')) || 0;
+
+
+        
+        console.log(pickupDate, returnDate, pickupTime, returnTime,additionalDrivers,mpesaNumber,carid,totalAmount);
+            
+        const datatosubmit ={
+            pickupDate,
+            pickupTime,
+            returnDate,
+            returnTime,
+            additionalDrivers,
+            mpesaNumber,
+            carid,
+            totalAmount
+        }
+        try {
+            const response = await axios.post('../php/book.php', datatosubmit);
+            console.log('Booking submitted successfully:', response.data);
+
+        } catch (error) {
+           console.log('Error submitting booking:', error); 
+        }
+    }
+        
+    </script>
+</body>
+</html>
